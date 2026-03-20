@@ -3,6 +3,7 @@
 
 The primary objective of this project is to establish a robust CI/CD pipeline that automates the process of building, testing, and deploying applications by integrating Git, Jenkins, Maven, SonarQube, Docker Hub, Ansible, Kubernetes (EKS) and Terraform, the project aims to achieve the following goals:
 
+
 ## Project Goals
 
 1. **Infrastructure as Code (IaC):** Use Terraform to provision the entire infrastructure, including:
