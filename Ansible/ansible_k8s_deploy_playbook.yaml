@@ -8,7 +8,7 @@
       copy:
         # src: /var/lib/jenkins/workspace/project5/Ansible/k8s_deployment.yaml  # Assuming Jenkins workspace variable
         src: "{{ playbook_dir }}/k8s_deployment.yaml"
-        dest: /home/ec2-user/
+        dest: /home/ec2-user/k8s_deployment.yaml
 
     - name: Apply Deployment
       ansible.builtin.command: 
