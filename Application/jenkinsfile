@@ -23,9 +23,8 @@
             steps {
                 echo 'scanning project'
                 sh 'ls -ltr'
-                #sh '''cd Application && mvn sonar:sonar \\
                 sh '''cd Application && mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-                      -Dsonar.host.url=http://3.218.150.140:9000 \\
+                      -Dsonar.host.url=http://3.218.150.140:9000 \
                       -Dsonar.login=squ_290af715cedad53aee22904d69634c25a2dd79eb'''
             }
     	}
