@@ -47,8 +47,7 @@
 		 stage('Push image to Hub'){
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
-                    sh 'echo "${dockerhub}" | docker login -u shivanidussa --password-stdin'
+                   withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {sh 'echo "${dockerhub}" | docker login -u shivanidussa --password-stdin'
 
               }
                    sh 'docker push shivanidussa/k8s:${BUILD_NUMBER}'
@@ -77,27 +76,15 @@
         }
     }
 
-    stage('k8s Deployment using ansible') {
-    steps {
-        withCredentials([
-            sshUserPrivateKey(
-                credentialsId: 'ssh',
-                keyFileVariable: 'SSH_KEY',
-                usernameVariable: 'SSH_USER'
-            )
-        ]) {
-            sh '''
-                chmod 600 "$SSH_KEY"
-
-                ansible-playbook \
-                    Ansible/ansible_k8s_deploy_playbook.yaml \
-                    -i /etc/ansible/ \
-                    --private-key "$SSH_KEY" \
-                    -u "$SSH_USER"
-            '''
+    stage('k8s Deployment using ansible'){
+            steps{
+              
+                    script{
+                        ansiblePlaybook credentialsId: 'ssh', disableHostKeyChecking: true, installation: 'ansible', inventory: '/etc/ansible/', playbook: 'Ansible/ansible_k8s_deploy_playbook.yaml'
+                   
+                }
+            }
         }
-    }
-}
 }
 }
 
