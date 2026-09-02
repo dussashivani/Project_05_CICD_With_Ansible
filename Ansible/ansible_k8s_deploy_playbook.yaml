@@ -12,5 +12,5 @@
 
     - name: Apply Deployment
       ansible.builtin.command: kubectl apply -f /home/ec2-user/k8s_deployment.yaml
-      KUBECONFIG: /home/ec2-user/.kube/config
+        KUBECONFIG: /home/ec2-user/.kube/config
     
