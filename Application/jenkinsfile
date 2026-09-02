@@ -6,7 +6,7 @@
         stage('Checkout Code') {
             steps {
                 echo 'scm git'
-                git branch: 'main', url: 'https://github.com/devopstraininghub/REALTIMEPROJECT.git'
+                git branch: 'main', url: 'https://github.com/dussashivani/Project_05_CICD_With_Ansible.git'
             }
         }
     	
@@ -17,29 +17,30 @@
                 sh 'cd Application && mvn clean package'
             }
         }
-		
+    
 		
         stage('sonar') {
             steps {
                 echo 'scanning project'
                 sh 'ls -ltr'
-                sh '''cd Application && mvn sonar:sonar \\
-                      -Dsonar.host.url=http://3.92.165.67:9000 \\
-                      -Dsonar.login=squ_1ed7440050e2a1369d5dbf845cd67bae3850d9bc'''
+                #sh '''cd Application && mvn sonar:sonar \\
+                sh '''cd Application && mvn org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
+                      -Dsonar.host.url=http://3.218.150.140:9000 \\
+                      -Dsonar.login=squ_290af715cedad53aee22904d69634c25a2dd79eb'''
             }
     	}
        stage('Build docker image'){
             steps{
                 script{
                     echo 'docker image build'
-					sh 'cd Application && docker build -t devopshubg333/k8s:${BUILD_NUMBER} .'
+					sh 'cd Application && docker build -t shivanidussa/k8s:${BUILD_NUMBER} .'
                 }
             }
         }
 		
        stage('docker image scan'){
         steps{
-            sh "trivy image devopshubg333/k8s:${BUILD_NUMBER}"
+            sh "trivy image shivanidussa/k8s:${BUILD_NUMBER}"
         }
     }		
          
@@ -48,24 +49,25 @@
             steps{
                 script{
                    withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
-                   sh 'docker login -u devopshubg333 -p ${dockerhub}'
+                   #sh 'docker login -u shivanidussa -p ${dockerhub}'
+                   sh 'echo "${dockerhub}" | docker login -u shivanidussa --password-stdin'
 
               }
-                   sh 'docker push devopshubg333/k8s:${BUILD_NUMBER}'
+                   sh 'docker push shivanidussa/k8s:${BUILD_NUMBER}'
                 }
             }
         }
 		
       stage('Update kubernetes Deployment manifest File') {
         environment {
-            GIT_REPO_NAME = "REALTIMEPROJECT"
-            GIT_USER_NAME = "devopstraininghub"
+            GIT_REPO_NAME = "Project_05_CICD_With_Ansible"
+            GIT_USER_NAME = "dussashivani"
         }
         steps {
             withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
                 sh '''
-                    git config user.email "madhu@gmail.com"
-                    git config user.name "madhu"
+                    git config user.email "shivani@gmail.com"
+                    git config user.name "shivani"
                     BUILD_NUMBER=${BUILD_NUMBER}
                   
                     sed -i "s/k8s:.*/k8s:${BUILD_NUMBER}/g" Ansible/k8s_deployment.yaml
